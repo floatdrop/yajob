@@ -1,0 +1,31 @@
+{
+  "name": "yajob",
+  "version": "0.0.0",
+  "description": "Yet another job queue",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/floatdrop/yajob.git"
+  },
+  "keywords": [
+    "mongodb",
+    "job",
+    "queue"
+  ],
+  "author": "Vsevolod Strukchinsky <floatdrop@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/floatdrop/yajob/issues"
+  },
+  "homepage": "https://github.com/floatdrop/yajob",
+  "devDependencies": {
+    "gap": "^0.3.0"
+  },
+  "dependencies": {
+    "co-monk": "^1.0.0",
+    "monk": "^0.9.1"
+  }
+}

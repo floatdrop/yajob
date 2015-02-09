@@ -23,3 +23,11 @@ for (var mail of mails.take(100)) {
 ## API
 
 Coming soon
+
+## put
+
+## update
+
+## take
+
+## delete

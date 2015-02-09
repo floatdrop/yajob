@@ -1,6 +1,6 @@
 var test = require('gap');
 
-var queue = require('./')('localhost/queue');
+var queue = require('../')('localhost/queue');
 
 var monk = require('monk');
 var wrap = require('co-monk');

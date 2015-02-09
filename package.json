@@ -4,7 +4,7 @@
   "description": "Yet another job queue",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "node ./test/*.js | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
   },
   "homepage": "https://github.com/floatdrop/yajob",
   "devDependencies": {
-    "gap": "^0.3.0"
+    "gap": "^0.3.0",
+    "tap-spec": "^2.2.1"
   },
   "dependencies": {
     "co-monk": "^1.0.0",

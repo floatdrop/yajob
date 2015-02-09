@@ -2,9 +2,9 @@
 
 var monk = require('monk');
 
-class Yablogs {
+class Yajob {
     constructor (uri) {
-        if (!(this instanceof Yablogs)) { return new Yablogs(uri); }
+        if (!(this instanceof Yajob)) { return new Yajob(uri); }
 
         this.tag = 'default';
         this.db = monk(uri);
@@ -34,4 +34,4 @@ class Yablogs {
     }
 }
 
-module.exports = Yablogs;
+module.exports = Yajob;

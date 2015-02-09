@@ -14,12 +14,17 @@ class Yablogs {
         this.tag = name;
     }
 
-    put () {
+    put (attrs) {
         var jobs = this.db.get(this.tag);
-        return jobs.insert({});
+        return jobs.insert({
+            createdAt: new Date(),
+            attrs: attrs
+        });
     }
 
-    take (count = 1) {
+    take (count) {
+        count = count || 1;
+
         var jobs = this.db.get(this.tag);
         return jobs.findAndModify({ update: { status: 'taken', takenAt: new Date() } }, {limit: count});
     }

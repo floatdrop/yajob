@@ -1,6 +1,8 @@
 # yajob [![Build Status](https://travis-ci.org/floatdrop/yajob.svg?branch=master)](https://travis-ci.org/floatdrop/yajob)
 
-> Job queue with tags, priorities and scheduled jobs
+> Yet another job queue with tags, priorities and scheduled jobs
+
+This is implementation of job queue with MongoDB. As like other attempts it utilizes atomic `findAndModify` to grab jobs, but with much more simple API to use it:
 
 ## Usage
 
@@ -20,6 +22,8 @@ for (var mail of mails.take(100)) {
 }
 ```
 
+Job considered `done`, when `next` method on iterator from `take` is called.
+
 ## API
 
 ### Yajob(uri)
@@ -35,7 +39,7 @@ MongoDB URI string.
 
 ### put(attrs, [options])
 
-Add job to queue.
+Add job to queue. Returns `Promise`.
 
 ### take([count])
 

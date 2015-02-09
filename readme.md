@@ -1,4 +1,4 @@
-# yajob
+# yajob [![Build Status](https://travis-ci.org/floatdrop/yajob.svg?branch=master)](https://travis-ci.org/floatdrop/yajob)
 
 > Job queue with tags, priorities and scheduled jobs
 

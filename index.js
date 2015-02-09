@@ -19,6 +19,11 @@ class Yablogs {
         return jobs.insert({});
     }
 
+    take (count = 1) {
+        var jobs = this.db.get(this.tag);
+        return jobs.findAndModify({ update: { status: 'taken', takenAt: new Date() } }, {limit: count});
+    }
+
     close () {
         this.db.close();
     }

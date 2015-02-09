@@ -22,12 +22,27 @@ for (var mail of mails.take(100)) {
 
 ## API
 
-Coming soon
+### Yajobs(uri)
 
-## put
+Returns instance of queue, that stores data in MongoDB.
 
-## update
+#### uri  
+Type: `String`  
 
-## take
+MongoDB URI string.
 
-## delete
+## Methods
+
+### put(attrs, [options])
+
+Add job to queue.
+
+### take([count])
+
+Returns `Iterator`, that will emit jobs one by one. After every `next` previous job considered done.
+
+##### count
+Type: `Number`  
+Default: `1`
+
+Number of jobs to take.

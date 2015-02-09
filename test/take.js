@@ -14,6 +14,7 @@ test('setup', function * () {
 
 test('return an iterator', function * (t) {
     var it = queue.take();
+    console.error(it.next);
     t.ok(typeof it.next === 'function', 'should have next method');
 });
 

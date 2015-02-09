@@ -4,7 +4,7 @@
   "description": "Yet another job queue",
   "main": "index.js",
   "scripts": {
-    "test": "node --harmony ./test/*.js | tap-spec"
+    "test": "tap --harmony test | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -22,8 +22,9 @@
   },
   "homepage": "https://github.com/floatdrop/yajob",
   "devDependencies": {
-    "gap": "^0.3.0",
     "co-monk": "^1.0.0",
+    "gap": "^0.3.0",
+    "tap": "^0.5.0",
     "tap-spec": "^2.2.1"
   },
   "dependencies": {

@@ -22,7 +22,7 @@ for (var mail of mails.take(100)) {
 
 ## API
 
-### Yajobs(uri)
+### Yajob(uri)
 
 Returns instance of queue, that stores data in MongoDB.
 

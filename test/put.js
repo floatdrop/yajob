@@ -1,18 +1,28 @@
 var test = require('gap');
 
-var queue = require('../')('localhost/queue');
+var queue = require('../')('localhost/test');
 
 var monk = require('monk');
-var wrap = require('co-monk');
-var db = monk('localhost/queue');
+var db = monk('localhost/test');
+var jobs = db.get('default');
+
+test('setup', function * () {
+    try {
+        yield jobs.drop();
+    } catch (e) { }
+});
 
 test('put should add job to queue', function * (t) {
     yield queue.put({
         test: 'message'
     });
 
-    var jobs = wrap(db.get('default'));
     var job = yield jobs.find();
 
     t.equal(job.length, 1, 'should be one document in default collection');
+});
+
+test('teardown', function * () {
+    queue.close();
+    db.close();
 });

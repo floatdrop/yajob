@@ -12,7 +12,7 @@ test('setup', function * () {
     } catch (e) { }
 });
 
-test('skip', function * (t) {
+test('scheduled', function * (t) {
     yield queue.put({test: 'wow'}, {schedule: new Date(Date.now() + 1000)});
 
     var it = yield queue.take();

@@ -37,7 +37,7 @@ In some cases you will need to skip taken job. To do this pass into generator `f
 var jobs = yield mails.take(100);
 var job = jobs.next().value;
 if (value === 'Ohnoez') {
-    job.next(false); // Returning Ohnoez to queue and get next job
+    job.next(false); // Returns Ohnoez back to queue and get next job
 }
 ```
 

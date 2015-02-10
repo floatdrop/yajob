@@ -1,11 +1,13 @@
 'use strict';
 
 var monk = require('monk');
+var ObjectID = require('monk/node_modules/mongoskin').ObjectID;
 
 class Yajob {
     constructor (uri) {
         if (!(this instanceof Yajob)) { return new Yajob(uri); }
 
+        this.id = new ObjectID();
         this.tag = 'default';
         this.db = monk(uri);
         this.delay = 0;
@@ -25,10 +27,12 @@ class Yajob {
     }
 
     put (attrs, opts) {
+        opts = opts || {};
+
         var jobs = this.db.get(this.tag);
+
         return jobs.insert({
             status: 'new',
-            createdAt: new Date(),
             attempts: 0,
             attrs: attrs,
             scheduledAt: opts.schedule || new Date(Date.now() + this.delay)
@@ -37,23 +41,45 @@ class Yajob {
 
     take (count) {
         count = count || 1;
+
         var now = new Date();
         var trys = this.maxTrys;
-
         var collection = this.db.get(this.tag);
+        var queueId = this.id;
+
         return collection
-            .findAndModify({
-                query: {
-                    status: 'new',
-                    scheduledAt: { $lte: now }
-                },
-                update: {
-                    status: 'taken',
-                    takenAt: now,
-                    $inc: { attempts: 1 }
+            .find({
+                status: 'new',
+                scheduledAt: { $lte: now }
+            })
+            .then(function takeJobs(jobs) {
+                var ids = jobs.map(function(d) {
+                    return d._id;
+                });
+
+                return collection.update({
+                    _id: { $in: ids },
+                    status: 'new'
+                }, {
+                    $set: {
+                        status: 'taken',
+                        takenBy: queueId
+                    } ,
+                    $inc: {attempts: 1}
+                }, {
+                    multi: true
+                });
+            })
+            .then(function getJobs(status) {
+                if (status.nModified < 1) {
+                    return function * () {};
                 }
-            }, {limit: count})
-            .then(function (batch) {
+
+                return collection.find({
+                    takenBy: queueId
+                });
+            })
+            .then(function emitJobs(batch) {
                 return function * () {
                     for (var i = 0; i < batch.length; i++) {
                         var job = batch[i];

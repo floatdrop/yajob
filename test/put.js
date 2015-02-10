@@ -20,6 +20,7 @@ test('put should add job to queue', function * (t) {
     var job = yield jobs.find();
 
     t.equal(job.length, 1, 'should be one document in default collection');
+    t.equal(job[0].attrs.test, 'message', 'should contain saved attrs');
 });
 
 test('teardown', function * () {

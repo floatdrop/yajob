@@ -2,6 +2,11 @@
 
 Job queue on MongoDB. It uses atomic writes to grab jobs and exposes generator friendly API.
 
+__Requirements__:
+
+ * IoJS or NodeJS 0.12 with `--harmony`
+ * At least MongoDB 2.6
+
 ## Usage
 
 ```js

@@ -54,3 +54,7 @@ Type: `Number`
 Default: `1`
 
 Maximum number of jobs to take from one batch request.
+
+### tag(name)
+
+Sets `name` of the MongoDB collection, where to save jobs.

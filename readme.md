@@ -1,8 +1,6 @@
 # yajob [![Build Status](https://travis-ci.org/floatdrop/yajob.svg?branch=master)](https://travis-ci.org/floatdrop/yajob)
 
-> Yet another job queue with tags and scheduled jobs
-
-This is implementation of job queue with MongoDB. As like other attempts it utilizes atomic writes to grab jobs, but with much more simple API to use it:
+Job queue on MongoDB. It uses atomic writes to grab jobs and exposes generator friendly API.
 
 ## Usage
 

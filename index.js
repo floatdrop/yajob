@@ -28,6 +28,11 @@ Yajob.prototype.tag = function (name) {
     return this;
 };
 
+Yajob.prototype.sort = function (order) {
+    this._sort = order;
+    return this;
+};
+
 Yajob.prototype.put = function (attrs, opts) {
     opts = opts || {};
 
@@ -37,7 +42,8 @@ Yajob.prototype.put = function (attrs, opts) {
         status: 'new',
         attempts: 0,
         attrs: attrs,
-        scheduledAt: opts.schedule || new Date(Date.now() + this._delay)
+        scheduledAt: opts.schedule || new Date(Date.now() + this._delay),
+        priority: opts.priority || 0
     });
 };
 
@@ -48,12 +54,13 @@ Yajob.prototype.take = function (count) {
     var maxTrys = this._maxTrys;
     var collection = this._db.get(this._tag);
     var queueId = this._id;
+    var sorting = this._sort;
 
     return collection
         .find({
             status: 'new',
             scheduledAt: { $lte: now }
-        }, {limit: count})
+        }, {limit: count, sort: this._sort})
         .then(function takeJobs(jobs) {
             var ids = jobs.map(function(d) {
                 return d._id;
@@ -80,7 +87,7 @@ Yajob.prototype.take = function (count) {
 
             return collection.find({
                 takenBy: queueId
-            });
+            }, {sort: sorting});
         })
         .then(function emitJobs(batch) {
             return function * () {

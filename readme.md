@@ -38,6 +38,15 @@ if (value === 'Ohnoez') {
 }
 ```
 
+### Prioritizing jobs
+
+By default, all jobs have priority `0`. You can specify `sort` for queue, in which jobs will be taken:
+
+```js
+var important = queue.tag('mail').sort({priority: -1});
+var trash = queue.tag('mail').sort({priority: 1});
+```
+
 ## API
 
 ### Yajob(uri)
@@ -59,7 +68,7 @@ Add job to queue. Returns `Promise`.
 Type: `Object`
 
  * `schedule` - `Date`, when job should be available to `take`
-
+ * `priority` - `Number`, that represents priority of job
 
 ### take([count])
 

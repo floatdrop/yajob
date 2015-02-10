@@ -1,6 +1,6 @@
 var test = require('gap');
 
-var queue = require('../')('localhost/test');
+var queue = require('../')('localhost/test').trys(1);
 
 var monk = require('monk');
 var db = monk('localhost/test');
@@ -20,8 +20,8 @@ test('skip', function * (t) {
     t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
     t.ok(step.next(false).done, 'should return one jobs');
 
-    var job = yield jobs.find();
-    t.equal(job.length, 1, 'should return job in queue');
+    var job = yield jobs.find({status: 'failed'});
+    t.equal(job.length, 1, 'should return failed job in queue');
 });
 
 

@@ -72,8 +72,10 @@ Yajob.prototype.take = function (count) {
             }, {
                 $set: {
                     status: 'taken',
-                    takenBy: queueId,
-                    takenAt: new Date()
+                    takenBy: queueId
+                },
+                $currentDate: {
+                    takenAt: {$type: 'date'}
                 },
                 $inc: {attempts: 1}
             }, {

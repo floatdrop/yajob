@@ -99,6 +99,11 @@ Yajob.prototype.take = function (count) {
         });
 };
 
+Yajob.prototype.remove = function (attrs) {
+    var collection = this._db.get(this._tag);
+    return collection.remove({status: 'new', attrs: attrs});
+};
+
 Yajob.prototype.close = function () {
     this._db.close();
 };

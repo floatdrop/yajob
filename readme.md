@@ -80,3 +80,7 @@ Sets delay for job, that is not scheduled. That is - every job without `schedule
 Default: `Infinity`
 
 Sets maximum job trys, before `failed` status will be assigned.
+
+### close()
+
+Closes connections to MongoDB.

@@ -44,7 +44,7 @@ if (value === 'Ohnoez') {
 
 Returns instance of queue, that stores data in MongoDB.
 
-#### uri  
+####№ uri  
 Type: `String`  
 
 MongoDB URI string.

@@ -24,6 +24,9 @@ test('take one', function * (t) {
     var step = it();
     t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
     t.ok(step.next().done, 'should return one job');
+
+    var job = yield jobs.find();
+    t.equal(job.length, 0, `should remove job after`);
 });
 
 test('teardown', function * () {

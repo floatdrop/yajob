@@ -88,6 +88,12 @@ Maximum number of jobs to take from one batch request.
 
 Removes jobs, that match `attrs` from queue. Returns `Promise`.
 
+### close()
+
+Closes connections to MongoDB.
+
+## Setters
+
 ### tag(name)
 Default: `default`
 
@@ -106,6 +112,6 @@ Sets maximum job trys, before `failed` status will be assigned.
 
 Sets sort order rule for `take`. Use this, when you need to get jobs, [sorted by priority](#priorities).
 
-### close()
+## License
 
-Closes connections to MongoDB.
+MIT © [Vsevolod Strukchinsky](floatdrop@gmail.com)

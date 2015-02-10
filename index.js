@@ -63,10 +63,8 @@ class Yajob {
                 }, {
                     $set: {
                         status: 'taken',
-                        takenBy: queueId
-                    },
-                    $currentDate: {
-                        takenAt: {$type: 'date'}
+                        takenBy: queueId,
+                        takenAt: new Date()
                     },
                     $inc: {attempts: 1}
                 }, {

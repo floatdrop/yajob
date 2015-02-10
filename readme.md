@@ -53,4 +53,4 @@ After every `next` previous job considered done.
 Type: `Number`  
 Default: `1`
 
-Number of jobs to take.
+Maximum number of jobs to take from one batch request.

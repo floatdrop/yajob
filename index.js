@@ -7,35 +7,38 @@ class Yajob {
     constructor (uri) {
         if (!(this instanceof Yajob)) { return new Yajob(uri); }
 
-        this.id = new ObjectID();
-        this.tag = 'default';
-        this.db = monk(uri);
-        this.delay = 0;
-        this.maxTrys = Infinity;
+        this._id = new ObjectID();
+        this._tag = 'default';
+        this._db = monk(uri);
+        this._delay = 0;
+        this._maxTrys = Infinity;
     }
 
     trys (count) {
-        this.maxTrys = count;
+        this._maxTrys = count;
+        return this;
     }
 
     delay (ms) {
-        this.delay = ms;
+        this._delay = ms;
+        return this;
     }
 
     tag (name) {
-        this.tag = name;
+        this._tag = name;
+        return this;
     }
 
     put (attrs, opts) {
         opts = opts || {};
 
-        var jobs = this.db.get(this.tag);
+        var jobs = this._db.get(this._tag);
 
         return jobs.insert({
             status: 'new',
             attempts: 0,
             attrs: attrs,
-            scheduledAt: opts.schedule || new Date(Date.now() + this.delay)
+            scheduledAt: opts.schedule || new Date(Date.now() + this._delay)
         });
     }
 
@@ -43,9 +46,9 @@ class Yajob {
         count = count || 1;
 
         var now = new Date();
-        var maxTrys = this.maxTrys;
-        var collection = this.db.get(this.tag);
-        var queueId = this.id;
+        var maxTrys = this._maxTrys;
+        var collection = this._db.get(this._tag);
+        var queueId = this._id;
 
         return collection
             .find({
@@ -98,7 +101,7 @@ class Yajob {
     }
 
     close () {
-        this.db.close();
+        this._db.close();
     }
 }
 

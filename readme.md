@@ -70,3 +70,11 @@ Maximum number of jobs to take from one batch request.
 ### tag(name)
 
 Sets `name` of the MongoDB collection, where to save jobs.
+
+### delay(milliseconds)
+
+Sets delay for job, that is not scheduled. That is - every job without `schedule` options will be scheduled on `Date() + delay`.
+
+### trys(number)
+
+Sets maximum job trys, before `failed` status will be assigned. By default set to `Infinity`.

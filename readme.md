@@ -67,7 +67,7 @@ Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one
 
 After every `next` previous job considered done.
 
-### delete(attrs)
+### remove(attrs)
 
 Removes jobs, that match `attrs` from queue. Returns `Promise`.
 

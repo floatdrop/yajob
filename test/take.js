@@ -49,6 +49,16 @@ test('take some', function * (t) {
     t.ok(step.next().done, 'should return one jobs');
 });
 
+test('take limit', function * (t) {
+    yield queue.put({test: 'wow'});
+    yield queue.put({test: 'wow'});
+
+    var it = yield queue.take(1);
+    var step = it();
+    t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
+    t.ok(step.next().done, 'should return one jobs');
+});
+
 test('teardown', function * () {
     queue.close();
     db.close();

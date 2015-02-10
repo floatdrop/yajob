@@ -44,7 +44,6 @@ By default, all jobs have priority `0`. You can specify `sort` for queue, in whi
 
 ```js
 var important = queue.tag('mail').sort({priority: -1});
-var trash = queue.tag('mail').sort({priority: 1});
 ```
 
 ## API

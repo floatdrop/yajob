@@ -70,7 +70,7 @@ Maximum number of jobs to take from one batch request.
 ### tag(name)
 Default: `default`
 
-Sets `name` of the MongoDB collection, where to save jobs.
+Sets `name` of the MongoDB collection, that will be used to save and get jobs.
 
 ### delay(milliseconds)
 

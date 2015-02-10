@@ -2,7 +2,7 @@
 
 > Yet another job queue with tags, priorities and scheduled jobs
 
-This is implementation of job queue with MongoDB. As like other attempts it utilizes atomic `findAndModify` to grab jobs, but with much more simple API to use it:
+This is implementation of job queue with MongoDB. As like other attempts it utilizes atomic writes to grab jobs, but with much more simple API to use it:
 
 ## Usage
 

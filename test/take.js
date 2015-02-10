@@ -29,6 +29,26 @@ test('take one', function * (t) {
     t.equal(job.length, 0, `should remove job after`);
 });
 
+test('take two', function * (t) {
+    yield queue.put({test: 'wow1'});
+    yield queue.put({test: 'wow2'});
+
+    var it = yield queue.take(2);
+    var step = it();
+    t.deepEqual(step.next().value, {test: 'wow1'}, 'should return right job');
+    t.deepEqual(step.next().value, {test: 'wow2'}, 'should return right job');
+    t.ok(step.next().done, 'should return two jobs');
+});
+
+test('take some', function * (t) {
+    yield queue.put({test: 'wow'});
+
+    var it = yield queue.take(2);
+    var step = it();
+    t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
+    t.ok(step.next().done, 'should return one jobs');
+});
+
 test('teardown', function * () {
     queue.close();
     db.close();

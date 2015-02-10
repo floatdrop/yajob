@@ -72,7 +72,7 @@ class Yajob {
             })
             .then(function getJobs(status) {
                 if (status.nModified < 1) {
-                    return function * () {};
+                    return [];
                 }
 
                 return collection.find({

@@ -58,13 +58,16 @@ class Yajob {
                 });
 
                 return collection.update({
-                    _id: { $in: ids },
+                    _id: {$in: ids},
                     status: 'new'
                 }, {
                     $set: {
                         status: 'taken',
                         takenBy: queueId
-                    } ,
+                    },
+                    $currentDate: {
+                        takenAt: {$type: 'date'}
+                    },
                     $inc: {attempts: 1}
                 }, {
                     multi: true

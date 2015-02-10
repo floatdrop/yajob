@@ -51,7 +51,7 @@ class Yajob {
             .find({
                 status: 'new',
                 scheduledAt: { $lte: now }
-            })
+            }, {limit: count})
             .then(function takeJobs(jobs) {
                 var ids = jobs.map(function(d) {
                     return d._id;

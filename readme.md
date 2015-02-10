@@ -67,15 +67,15 @@ Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one
 
 After every `next` previous job considered done.
 
-### remove(attrs)
-
-Removes jobs, that match `attrs` from queue. Returns `Promise`.
-
 ##### count
 Type: `Number`  
 Default: `1`
 
 Maximum number of jobs to take from one batch request.
+
+### remove(attrs)
+
+Removes jobs, that match `attrs` from queue. Returns `Promise`.
 
 ### tag(name)
 Default: `default`

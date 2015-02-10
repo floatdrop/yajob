@@ -26,7 +26,7 @@ test('take one', function * (t) {
     t.ok(step.next().done, 'should return one job');
 
     var job = yield jobs.find();
-    t.equal(job.length, 0, `should remove job from queue`);
+    t.equal(job.length, 0, 'should remove job from queue');
 });
 
 test('take two', function * (t) {

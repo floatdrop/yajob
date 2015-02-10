@@ -21,7 +21,7 @@ test('skip', function * (t) {
     t.ok(step.next(false).done, 'should return two jobs');
 
     var job = yield jobs.find();
-    t.equal(job.length, 1, `should return job in queue`);
+    t.equal(job.length, 1, 'should return job in queue');
 });
 
 

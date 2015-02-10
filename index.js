@@ -43,7 +43,7 @@ class Yajob {
         count = count || 1;
 
         var now = new Date();
-        var trys = this.maxTrys;
+        var maxTrys = this.maxTrys;
         var collection = this.db.get(this.tag);
         var queueId = this.id;
 
@@ -89,7 +89,7 @@ class Yajob {
                         var done = yield job.attrs;
 
                         if (done === false) {
-                            var status = job.attempts > trys ? 'failed' : 'new';
+                            var status = job.attempts < maxTrys ? 'new' : 'failed';
                             collection.update({_id: job._id}, {status: status});
                         } else {
                             collection.remove({_id: job._id});

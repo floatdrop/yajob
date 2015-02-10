@@ -100,6 +100,10 @@ Default: `Infinity`
 
 Sets maximum job trys, before `failed` status will be assigned.
 
+### sort(order)
+
+Sets sort order rule for `take`. Use this, when you need to get jobs, sorted by priority (`{priority: -1}`).
+
 ### close()
 
 Closes connections to MongoDB.

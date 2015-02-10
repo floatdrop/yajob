@@ -26,7 +26,7 @@ for (var mail of jobs) {
 
 Job considered `done`, when `next` method on iterator from `take` is called.
 
-### Skipping jobs
+### Skip jobs
 
 In some cases you will need to skip taken job. To do this pass into generator `false` value:
 
@@ -38,7 +38,7 @@ if (value === 'Ohnoez') {
 }
 ```
 
-### Prioritizing jobs
+### Priorities
 
 By default, all jobs have priority `0`. You can specify `sort` for queue, in which jobs will be taken:
 

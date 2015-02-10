@@ -26,6 +26,18 @@ for (var mail of jobs) {
 
 Job considered `done`, when `next` method on iterator from `take` is called.
 
+### Skipping jobs
+
+In some cases you will need to skip taken job. To do this pass into generator `false` value:
+
+```js
+var jobs = yield mails.take(100);
+var job = jobs.next().value;
+if (value === 'Ohnoez') {
+    job.next(false); // Returning Ohnoez to queue and get next job
+}
+```
+
 ## API
 
 ### Yajob(uri)

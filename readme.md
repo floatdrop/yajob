@@ -55,6 +55,12 @@ MongoDB URI string.
 
 Add job to queue. Returns `Promise`.
 
+##### options
+Type: `Object`
+
+ * `schedule` - `Date`, when job should be available to `take`
+
+
 ### take([count])
 
 Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one.

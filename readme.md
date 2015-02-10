@@ -52,7 +52,7 @@ var important = queue.tag('mail').sort({priority: -1});
 
 Returns instance of queue, that stores data in MongoDB.
 
-####№ uri  
+##### uri  
 Type: `String`  
 
 MongoDB URI string.

@@ -17,7 +17,9 @@ yield mails.put({
     body: 'Wow!'
 });
 
-for (var mail of mails.take(100)) {
+var jobs = yield mails.take(100);
+
+for (var mail of jobs) {
     yield sendmail(mail);
 }
 ```
@@ -43,7 +45,9 @@ Add job to queue. Returns `Promise`.
 
 ### take([count])
 
-Returns `Iterator`, that will emit jobs one by one. After every `next` previous job considered done.
+Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one.
+
+After every `next` previous job considered done.
 
 ##### count
 Type: `Number`  

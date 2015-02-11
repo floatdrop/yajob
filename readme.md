@@ -15,8 +15,8 @@ var queue = require('yajob')('localhost/queuedb');
 var mails = queue.tag('mail');
 
 yield mails.put({
-    from: 'floatdrop@yandex-team.ru',
-    to: 'nodejs-dev@yandex-team.ru',
+    from: 'floatdrop@gmail.com',
+    to: 'nodejs-dev@dev-null.com',
     body: 'Wow!'
 });
 

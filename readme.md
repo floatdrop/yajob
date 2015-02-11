@@ -25,7 +25,7 @@ for (var mail of yield mails.take(100)) {
 }
 ```
 
-Job considered `done`, when `next` method on iterator from `take` is called.
+Jobs removed from queue, when all jobs are taken from batch.
 
 ### Skip jobs
 
@@ -79,7 +79,7 @@ Type: `Object`
 
 Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one.
 
-After every `next` previous job considered done.
+After all jobs are taken from batch - they are considered `done` and removed from queue.
 
 ##### count
 Type: `Number`  

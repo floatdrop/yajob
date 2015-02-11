@@ -109,17 +109,23 @@ Yajob.prototype.take = function (count) {
         })
         .then(function emitJobs(batch) {
             return (function * () {
+                var ids = [];
+
                 for (var i = 0; i < batch.length; i++) {
                     var job = batch[i];
                     var done = yield job.attrs;
 
                     if (done === false) {
-                        var status = job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed;
-                        collection.update({_id: job._id}, {status: status});
+                        collection.update(
+                            {_id: job._id},
+                            {status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
+                        );
                     } else {
-                        collection.remove({_id: job._id});
+                        ids.push(job._id);
                     }
                 }
+
+                collection.remove({_id: {$in: ids}});
             })();
         });
 };

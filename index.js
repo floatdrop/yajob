@@ -98,7 +98,7 @@ Yajob.prototype.take = function (count) {
             }, {sort: sorting});
         })
         .then(function emitJobs(batch) {
-            return function * () {
+            return (function * () {
                 for (var i = 0; i < batch.length; i++) {
                     var job = batch[i];
                     var done = yield job.attrs;
@@ -110,7 +110,7 @@ Yajob.prototype.take = function (count) {
                         collection.remove({_id: job._id});
                     }
                 }
-            };
+            })();
         });
 };
 

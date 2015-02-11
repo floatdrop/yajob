@@ -15,8 +15,7 @@ test('setup', function * () {
 test('scheduled', function * (t) {
     yield queue.put({test: 'wow'}, {schedule: new Date(Date.now() + 1000)});
 
-    var it = yield queue.take();
-    var step = it();
+    var step = yield queue.take();
     t.ok(step.next(false).done, 'should return no jobs');
 });
 

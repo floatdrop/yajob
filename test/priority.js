@@ -17,8 +17,7 @@ test('priority', function * (t) {
     yield queue.put({test: '1'}, {priority: 1});
     yield queue.put({test: '2'}, {priority: 2});
 
-    var it = yield queue.take(2);
-    var step = it();
+    var step = yield queue.take(2);
     t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
     t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
     t.ok(step.next().done);
@@ -29,8 +28,7 @@ test('priority', function * (t) {
     yield queue.put({test: '1'}, {priority: 1});
     yield queue.put({test: '2'}, {priority: 2});
 
-    var it = yield queue.take(2);
-    var step = it();
+    var step = yield queue.take(2);
     t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
     t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
     t.ok(step.next().done);

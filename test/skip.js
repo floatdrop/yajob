@@ -15,8 +15,7 @@ test('setup', function * () {
 test('skip', function * (t) {
     yield queue.put({test: 'wow'});
 
-    var it = yield queue.take();
-    var step = it();
+    var step = yield queue.take();
     t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
     t.ok(step.next(false).done, 'should return one jobs');
 

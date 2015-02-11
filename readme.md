@@ -20,9 +20,7 @@ yield mails.put({
     body: 'Wow!'
 });
 
-var jobs = yield mails.take(100);
-
-for (var mail of jobs) {
+for (var mail of yield mails.take(100)) {
     yield sendmail(mail);
 }
 ```

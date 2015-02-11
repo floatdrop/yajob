@@ -16,8 +16,7 @@ test('setup', function * () {
 test('tag', function * (t) {
     yield queue.put({test: 'wow'});
 
-    var it = yield queue.take();
-    var step = it();
+    var step = yield queue.take();
     t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
     t.ok(step.next().done, 'should return one jobs');
 });

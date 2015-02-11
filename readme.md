@@ -66,6 +66,11 @@ MongoDB URI string.
 
 Add job to queue. Returns `Promise`.
 
+##### attrs
+Type: `Object` / `Array`
+
+Data, that will be attached to job. If `attrs` is an `Array` - then every `Object` in `attrs` considered as new job.
+
 ##### options
 Type: `Object`
 

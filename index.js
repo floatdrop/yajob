@@ -35,16 +35,22 @@ Yajob.prototype.sort = function (order) {
 
 Yajob.prototype.put = function (attrs, opts) {
     opts = opts || {};
+    opts.schedule = opts.schedule || new Date(Date.now() + this._delay);
+    opts.priority = opts.priority || 0;
+
+    if (!Array.isArray(attrs)) { attrs = [attrs]; }
 
     var jobs = this._db.get(this._tag);
 
-    return jobs.insert({
-        status: 'new',
-        attempts: 0,
-        attrs: attrs,
-        scheduledAt: opts.schedule || new Date(Date.now() + this._delay),
-        priority: opts.priority || 0
-    });
+    return jobs.insert(attrs.map(function (obj) {
+        return {
+            status: 'new',
+            attempts: 0,
+            attrs: obj,
+            scheduledAt: opts.schedule,
+            priority: opts.priority
+        };
+    }));
 };
 
 Yajob.prototype.take = function (count) {

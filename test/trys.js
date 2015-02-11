@@ -12,7 +12,7 @@ test('setup', function * () {
     } catch (e) { }
 });
 
-test('skip', function * (t) {
+test('trys', function * (t) {
     yield queue.put({test: 'wow'});
 
     var step = yield queue.take();

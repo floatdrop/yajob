@@ -16,20 +16,38 @@ test('setup', function * () {
     } catch (e) { }
 });
 
-test('concurrent', function * (t) {
-
+test('concurrent (in different queues)', function * (t) {
     yield queueOne.put({test: '1'});
     yield queueOne.put({test: '2'});
     yield queueOne.put({test: '3'});
 
-    var takes = yield [queueOne.take(2), queueTwo.take(2)];
+    var takeOne = yield queueOne.take(2);
+    var takeTwo = yield queueTwo.take(2);
+
     var i = 0;
 
-    for (let job of takes[0]) { i++; }
-    for (let job of takes[1]) { i++; }
+    for (let job of takeOne) { i++; }
+    for (let job of takeTwo) { i++; }
 
-    t.equal(i, 2, 'should not retake jobs');
+    t.equal(i, 3, 'should not retake jobs');
 });
+
+test('concurrent (in same queue)', function * (t) {
+    yield queueOne.put({test: '1'});
+    yield queueOne.put({test: '2'});
+    yield queueOne.put({test: '3'});
+
+    var takeOne = yield queueOne.take(2);
+    var takeTwo = yield queueOne.take(2);
+
+    var i = 0;
+
+    for (let job of takeOne) { i++; }
+    for (let job of takeTwo) { i++; }
+
+    t.equal(i, 3, 'should not retake jobs');
+});
+
 
 test('teardown', function * () {
     queueOne.close();

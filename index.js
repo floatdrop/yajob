@@ -6,7 +6,6 @@ var ObjectID = require('monk/node_modules/mongoskin').ObjectID;
 function Yajob(uri) {
     if (!(this instanceof Yajob)) { return new Yajob(uri); }
 
-    this._id = new ObjectID();
     this._tag = 'default';
     this._db = monk(uri);
     this._delay = 0;
@@ -69,7 +68,7 @@ Yajob.prototype.take = function (count) {
     var now = new Date();
     var maxTrys = this._maxTrys;
     var collection = this._db.get(this._tag);
-    var queueId = this._id;
+    var takeId = new ObjectID();
     var sorting = this._sort;
 
     return collection
@@ -88,7 +87,7 @@ Yajob.prototype.take = function (count) {
             }, {
                 $set: {
                     status: Yajob.status.taken,
-                    takenBy: queueId
+                    takenBy: takeId
                 },
                 $currentDate: {
                     takenAt: {$type: 'date'}
@@ -104,7 +103,7 @@ Yajob.prototype.take = function (count) {
             }
 
             return collection.find({
-                takenBy: queueId
+                takenBy: takeId
             }, {sort: sorting});
         })
         .then(function emitJobs(batch) {

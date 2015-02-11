@@ -26,6 +26,9 @@
     "gap": "^0.3.0",
     "tap": "^0.5.0"
   },
+  "files": [
+    "index.js"
+  ],
   "dependencies": {
     "monk": "^0.9.1"
   }

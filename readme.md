@@ -10,9 +10,9 @@ __Requirements__:
 ## Usage
 
 ```js
-var queue = require('yajob')('localhost/queuedb');
-
-var mails = queue.tag('mail');
+var yajob = require('yajob');
+var mails = yajob('localhost/queuedb')
+    .tag('mails');
 
 yield mails.put({
     from: 'floatdrop@gmail.com',

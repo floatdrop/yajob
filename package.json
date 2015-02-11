@@ -1,6 +1,6 @@
 {
   "name": "yajob",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Yet another job queue",
   "main": "index.js",
   "scripts": {

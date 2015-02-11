@@ -13,7 +13,7 @@ function Yajob(uri) {
     this._maxTrys = Infinity;
 }
 
-Yajob.status = {
+Yajob.prototype.status = Yajob.status = {
     'new': 0,
     'taken': 1,
     'failed': 2
@@ -74,7 +74,7 @@ Yajob.prototype.take = function (count) {
 
     return collection
         .find({
-            status: 'new',
+            status: Yajob.status.new,
             scheduledAt: { $lte: now }
         }, {limit: count, sort: this._sort})
         .then(function takeJobs(jobs) {
@@ -126,7 +126,7 @@ Yajob.prototype.take = function (count) {
 
 Yajob.prototype.remove = function (attrs) {
     var collection = this._db.get(this._tag);
-    return collection.remove({status: 'new', attrs: attrs});
+    return collection.remove({status: Yajob.status.new, attrs: attrs});
 };
 
 Yajob.prototype.close = function () {

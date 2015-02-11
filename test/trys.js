@@ -19,7 +19,7 @@ test('skip', function * (t) {
     t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
     t.ok(step.next(false).done, 'should return one jobs');
 
-    var job = yield jobs.find({status: 'failed'});
+    var job = yield jobs.find({status: queue.status.failed});
     t.equal(job.length, 1, 'should return failed job in queue');
 });
 

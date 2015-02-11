@@ -115,6 +115,12 @@ Sets maximum job trys, before `failed` status will be assigned.
 
 Sets sort order rule for `take`. Use this, when you need to get jobs, [sorted by priority](#priorities).
 
+### Job status
+
+* `0` - __new__ job, that was just added to queue
+* `1` - __taken__ job, that was assigned to `takenBy` worker
+* `2` - __failed__ job, that has more `attemts` than allowed
+
 ## License
 
 MIT © [Vsevolod Strukchinsky](floatdrop@gmail.com)

@@ -13,6 +13,12 @@ function Yajob(uri) {
     this._maxTrys = Infinity;
 }
 
+Yajob.status = {
+    'new': 0,
+    'taken': 1,
+    'failed': 2
+};
+
 Yajob.prototype.trys = function (count) {
     this._maxTrys = count;
     return this;
@@ -44,11 +50,15 @@ Yajob.prototype.put = function (attrs, opts) {
 
     return jobs.insert(attrs.map(function (obj) {
         return {
-            status: 'new',
+            status: Yajob.status.new,
             attempts: 0,
             attrs: obj,
             scheduledAt: opts.schedule,
-            priority: opts.priority
+            priority: opts.priority,
+
+            // Preallocate space for update-in-place
+            takenAt: new Date(0),
+            takenBy: new ObjectID('000000000000000000000000')
         };
     }));
 };
@@ -74,10 +84,10 @@ Yajob.prototype.take = function (count) {
 
             return collection.update({
                 _id: {$in: ids},
-                status: 'new'
+                status: Yajob.status.new
             }, {
                 $set: {
-                    status: 'taken',
+                    status: Yajob.status.taken,
                     takenBy: queueId
                 },
                 $currentDate: {
@@ -104,7 +114,7 @@ Yajob.prototype.take = function (count) {
                     var done = yield job.attrs;
 
                     if (done === false) {
-                        var status = job.attempts < maxTrys ? 'new' : 'failed';
+                        var status = job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed;
                         collection.update({_id: job._id}, {status: status});
                     } else {
                         collection.remove({_id: job._id});

@@ -71,64 +71,67 @@ Yajob.prototype.take = function (count) {
     var takeId = new ObjectID();
     var sorting = this._sort;
 
-    return collection
-        .find({
-            status: Yajob.status.new,
-            scheduledAt: { $lte: now }
-        }, {limit: count, sort: this._sort, fields: {_id: 1}})
-        .then(function takeJobs(jobs) {
-            var ids = jobs.map(function(d) {
-                return d._id;
-            });
+    function takeJobs(jobs) {
+        var ids = jobs.map(function(d) { return d._id; });
+        var pickedJobs = {
+            _id: {$in: ids},
+            status: Yajob.status.new
+        };
 
-            return collection.update({
-                _id: {$in: ids},
-                status: Yajob.status.new
-            }, {
-                $set: {
-                    status: Yajob.status.taken,
-                    takenBy: takeId
-                },
-                $currentDate: {
-                    takenAt: {$type: 'date'}
-                },
-                $inc: {attempts: 1}
-            }, {
-                multi: true
-            });
-        })
-        .then(function getJobs(status) {
-            if (status.nModified < 1) {
-                return [];
+        return collection.update(pickedJobs, {
+            $set: {
+                status: Yajob.status.taken,
+                takenBy: takeId
+            },
+            $currentDate: {
+                takenAt: {$type: 'date'}
+            },
+            $inc: {attempts: 1}
+        }, {multi: true});
+    }
+
+    function getJobs(status) {
+        if (status.nModified < 1) {
+            return [];
+        }
+
+        return collection.find({takenBy: takeId}, {sort: sorting});
+    }
+
+    function returnGenerator(batch) {
+        return (function * () {
+            var ids = [];
+
+            for (var i = 0; i < batch.length; i++) {
+                var job = batch[i];
+                var done = yield job.attrs;
+
+                if (done === false) {
+                    collection.update(
+                        {_id: job._id},
+                        {status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
+                    );
+                } else {
+                    ids.push(job._id);
+                }
             }
 
-            return collection.find({
-                takenBy: takeId
-            }, {sort: sorting});
-        })
-        .then(function emitJobs(batch) {
-            return (function * () {
-                var ids = [];
+            if (ids.length) {
+                collection.remove({_id: {$in: ids}});
+            }
+        })();
+    }
 
-                for (var i = 0; i < batch.length; i++) {
-                    var job = batch[i];
-                    var done = yield job.attrs;
+    var notTakenJobs = {
+        status: Yajob.status.new,
+        scheduledAt: { $lte: now }
+    };
 
-                    if (done === false) {
-                        collection.update(
-                            {_id: job._id},
-                            {status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
-                        );
-                    } else {
-                        ids.push(job._id);
-                    }
-                }
-
-                if (ids.length) {
-                    collection.remove({_id: {$in: ids}});
-                }
-            })();
-        });
+    return collection
+        .find(notTakenJobs, {limit: count, sort: this._sort, fields: {_id: 1}})
+        .then(takeJobs)
+        .then(getJobs)
+        .then(returnGenerator);
 };
 
 Yajob.prototype.remove = function (attrs) {

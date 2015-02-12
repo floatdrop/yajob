@@ -75,7 +75,7 @@ Yajob.prototype.take = function (count) {
         .find({
             status: Yajob.status.new,
             scheduledAt: { $lte: now }
-        }, {limit: count, sort: this._sort})
+        }, {limit: count, sort: this._sort, fields: {_id: 1}})
         .then(function takeJobs(jobs) {
             var ids = jobs.map(function(d) {
                 return d._id;

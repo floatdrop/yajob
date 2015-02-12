@@ -55,7 +55,7 @@ Yajob.prototype.put = function (attrs, opts) {
             scheduledAt: opts.schedule,
             priority: opts.priority,
 
-            // Preallocate space for update-in-place
+            // Preallocate space to keep paddingFactor ~ 1
             takenAt: new Date(0),
             takenBy: new ObjectID('000000000000000000000000')
         };

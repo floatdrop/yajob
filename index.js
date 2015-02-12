@@ -124,7 +124,9 @@ Yajob.prototype.take = function (count) {
                     }
                 }
 
-                collection.remove({_id: {$in: ids}});
+                if (ids.length) {
+                    collection.remove({_id: {$in: ids}});
+                }
             })();
         });
 };

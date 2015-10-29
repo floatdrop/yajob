@@ -2,6 +2,7 @@
 
 var monk = require('monk');
 var ObjectID = require('monk/node_modules/mongoskin').ObjectID;
+var shuffle = require('array-shuffle');
 
 function Yajob(uri) {
     if (!(this instanceof Yajob)) { return new Yajob(uri); }
@@ -73,6 +74,9 @@ Yajob.prototype.take = function (count) {
 
     function takeJobs(jobs) {
         var ids = jobs.map(function(d) { return d._id; });
+
+        ids = shuffle(ids).splice(0, count);
+
         var pickedJobs = {
             _id: {$in: ids},
             status: Yajob.status.new
@@ -128,7 +132,7 @@ Yajob.prototype.take = function (count) {
     };
 
     return collection
-        .find(notTakenJobs, {limit: count, sort: this._sort, fields: {_id: 1}})
+        .find(notTakenJobs, {limit: count * 2, sort: this._sort, fields: {_id: 1}})
         .then(takeJobs)
         .then(getJobs)
         .then(returnGenerator);

@@ -1,7 +1,6 @@
 'use strict';
 
 var test = require('gap');
-var getIterable = require('get-iterable');
 
 var monk = require('monk');
 var db = monk('localhost/test');
@@ -27,7 +26,7 @@ test('concurrent read', function * (t) {
 
 	var takes = yield [queueOne.take(50), queueOne.take(50)];
 
-	var i = getIterable(takes[0]).length + getIterable(takes[1]).length;
+	var i = Array.from(takes[0]).length + Array.from(takes[1]).length;
 
 	t.ok(i > 50, 'should put jobs in both queues');
 });

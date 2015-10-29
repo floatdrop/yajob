@@ -3,7 +3,6 @@
 var queue = require('../')('localhost/queue');
 var db = require('monk')('localhost/queue');
 var co = require('co');
-var getIterable = require('get-iterable');
 
 co(function * () {
 	var collection = db.get('default');
@@ -32,7 +31,7 @@ co(function * () {
 		console.log(`Taking ${jobs} jobs by ${batch} job batch...`);
 		let start = process.hrtime();
 		for (let i = 0; i < jobs / batch; i++) {
-			getIterable(yield queue.take(batch));
+			Array.from(yield queue.take(batch));
 		}
 		let end = process.hrtime(start);
 		let ms = (end[0] * 1e9 + end[1]) / 1e6;

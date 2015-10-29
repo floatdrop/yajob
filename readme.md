@@ -4,7 +4,7 @@ Job queue on MongoDB. It uses atomic writes to grab jobs and exposes generator f
 
 __Requirements__:
 
- * IoJS or NodeJS `>= 0.12` with `--harmony`
+ * NodeJS `>= 4`
  * MongoDB `>= 2.6`
 
 ## Usage

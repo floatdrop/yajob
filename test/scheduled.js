@@ -7,27 +7,26 @@ var db = monk('localhost/test');
 var jobs = db.get('default');
 
 test('setup', function * () {
-    try {
-        yield jobs.drop();
-    } catch (e) { }
+	try {
+		yield jobs.drop();
+	} catch (e) { }
 });
 
 test('scheduled', function * (t) {
-    yield queue.put({test: 'wow'}, {schedule: new Date(Date.now() + 50)});
+	yield queue.put({test: 'wow'}, {schedule: new Date(Date.now() + 50)});
 
-    var step = yield queue.take();
-    t.ok(step.next(false).done, 'should return no jobs');
+	var step = yield queue.take();
+	t.ok(step.next(false).done, 'should return no jobs');
 
-    yield new Promise(function (resolve) {
-        setTimeout(resolve, 100);
-    });
+	yield new Promise(function (resolve) {
+		setTimeout(resolve, 100);
+	});
 
-    step = yield queue.take();
-    t.ok(step.next(false).value, 'should return job');
+	step = yield queue.take();
+	t.ok(step.next(false).value, 'should return job');
 });
 
-
 test('teardown', function * () {
-    queue.close();
-    db.close();
+	queue.close();
+	db.close();
 });

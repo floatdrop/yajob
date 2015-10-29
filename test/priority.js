@@ -7,35 +7,34 @@ var db = monk('localhost/test');
 var jobs = db.get('default');
 
 test('setup', function * () {
-    try {
-        yield jobs.drop();
-    } catch (e) { }
+	try {
+		yield jobs.drop();
+	} catch (e) { }
 });
 
 test('priority', function * (t) {
-    queue.sort({priority: -1});
-    yield queue.put({test: '1'}, {priority: 1});
-    yield queue.put({test: '2'}, {priority: 2});
+	queue.sort({priority: -1});
+	yield queue.put({test: '1'}, {priority: 1});
+	yield queue.put({test: '2'}, {priority: 2});
 
-    var step = yield queue.take(2);
-    t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
-    t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
-    t.ok(step.next().done);
+	var step = yield queue.take(2);
+	t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
+	t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
+	t.ok(step.next().done);
 });
 
 test('priority', function * (t) {
-    queue.sort({priority: 1});
-    yield queue.put({test: '1'}, {priority: 1});
-    yield queue.put({test: '2'}, {priority: 2});
+	queue.sort({priority: 1});
+	yield queue.put({test: '1'}, {priority: 1});
+	yield queue.put({test: '2'}, {priority: 2});
 
-    var step = yield queue.take(2);
-    t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
-    t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
-    t.ok(step.next().done);
+	var step = yield queue.take(2);
+	t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
+	t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
+	t.ok(step.next().done);
 });
-
 
 test('teardown', function * () {
-    queue.close();
-    db.close();
+	queue.close();
+	db.close();
 });

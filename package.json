@@ -4,7 +4,7 @@
   "description": "Yet another job queue",
   "main": "index.js",
   "scripts": {
-    "test": "tap --harmony test"
+    "test": "xo && tap --harmony test"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
   "devDependencies": {
     "co-monk": "^1.0.0",
     "gap": "^0.3.0",
-    "tap": "^0.5.0"
+    "tap": "^0.5.0",
+    "xo": "^0.10.0"
   },
   "files": [
     "index.js"

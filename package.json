@@ -24,6 +24,7 @@
   "devDependencies": {
     "co-monk": "^1.0.0",
     "gap": "^0.3.0",
+    "get-iterable": "^1.0.0",
     "tap": "^0.5.0",
     "xo": "^0.10.0"
   },
@@ -31,6 +32,12 @@
     "index.js"
   ],
   "dependencies": {
+    "array-shuffle": "^1.0.0",
     "monk": "^0.9.1"
+  },
+  "xo": {
+    "ignore": [
+      "benchmark/**"
+    ]
   }
 }

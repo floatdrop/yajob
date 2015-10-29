@@ -5,7 +5,9 @@ var ObjectID = require('monk/node_modules/mongoskin').ObjectID;
 var shuffle = require('array-shuffle');
 
 function Yajob(uri) {
-	if (!(this instanceof Yajob)) { return new Yajob(uri); }
+	if (!(this instanceof Yajob)) {
+		return new Yajob(uri);
+	}
 
 	this._tag = 'default';
 	this._db = monk(uri);
@@ -14,9 +16,9 @@ function Yajob(uri) {
 }
 
 Yajob.prototype.status = Yajob.status = {
-	'new': 0,
-	'taken': 1,
-	'failed': 2
+	new: 0,
+	taken: 1,
+	failed: 2
 };
 
 Yajob.prototype.trys = function (count) {
@@ -44,7 +46,9 @@ Yajob.prototype.put = function (attrs, opts) {
 	opts.schedule = opts.schedule || new Date(Date.now() + this._delay);
 	opts.priority = opts.priority || 0;
 
-	if (!Array.isArray(attrs)) { attrs = [attrs]; }
+	if (!Array.isArray(attrs)) {
+		attrs = [attrs];
+	}
 
 	var jobs = this._db.get(this._tag);
 
@@ -73,7 +77,9 @@ Yajob.prototype.take = function (count) {
 	var sorting = this._sort;
 
 	function takeJobs(jobs) {
-		var ids = jobs.map(function(d) { return d._id; });
+		var ids = jobs.map(function (d) {
+			return d._id;
+		});
 
 		ids = shuffle(ids).splice(0, count);
 
@@ -128,7 +134,7 @@ Yajob.prototype.take = function (count) {
 
 	var notTakenJobs = {
 		status: Yajob.status.new,
-		scheduledAt: { $lte: now }
+		scheduledAt: {$lte: now}
 	};
 
 	return collection

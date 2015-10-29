@@ -26,11 +26,11 @@ test('put should add job to queue', function * (t) {
 test('put take an Array as argument', function * (t) {
 	yield jobs.remove();
 
-	yield queue.put([{ test: '1' }]);
+	yield queue.put([{test: '1'}]);
 	var job = yield jobs.find();
 	t.equal(job.length, 1, 'should be one document in default collection');
 	t.equal(job[0].attrs.test, '1', 'should contain saved attrs');
-	yield queue.put([{ test: '2' }, { test: '3' }]);
+	yield queue.put([{test: '2'}, {test: '3'}]);
 
 	job = yield jobs.find();
 	t.equal(job.length, 3, 'should be one document in default collection');

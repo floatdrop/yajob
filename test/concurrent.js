@@ -1,38 +1,24 @@
-'use strict';
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var test = require('gap');
-
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-var queueOne;
-var queueTwo;
-
-test('setup', function * () {
-	queueOne = require('../')('localhost/test');
-	queueTwo = require('../')('localhost/test');
+test('concurrent read', async t => {
+	const queueDb = await QueueDb();
+	const queueOne = yajob(queueDb.uri);
+	const queueTwo = yajob(queueDb.uri);
 
 	try {
-		yield jobs.drop();
-	} catch (e) { }
-});
+		for (let n = 0; n < 100; n++) {
+			await queueOne.put({n});
+		}
 
-test('concurrent read', function * (t) {
-	yield jobs.remove();
+		const takes = await Promise.all([queueOne.take(50), queueOne.take(50)]);
+		const takesLength = Array.from(takes[0]).length + Array.from(takes[1]).length;
 
-	for (var n = 0; n < 100; n++) {
-		yield queueOne.put({test: n});
+		t.ok(takesLength > 50, 'should put jobs in both queues');
+	} finally {
+		await queueOne.close();
+		await queueTwo.close();
+		await queueDb.close();
 	}
-
-	var takes = yield [queueOne.take(50), queueOne.take(50)];
-
-	var i = Array.from(takes[0]).length + Array.from(takes[1]).length;
-
-	t.ok(i > 50, 'should put jobs in both queues');
-});
-
-test('teardown', function * () {
-	queueOne.close();
-	queueTwo.close();
-	db.close();
 });

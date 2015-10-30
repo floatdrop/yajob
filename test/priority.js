@@ -1,40 +1,42 @@
-var test = require('gap');
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var queue = require('../')('localhost/test');
+test('asc priority', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
 
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-
-test('setup', function * () {
 	try {
-		yield jobs.drop();
-	} catch (e) { }
+		queue.sort({priority: -1});
+
+		await queue.put({test: '1'}, {priority: 1});
+		await queue.put({test: '2'}, {priority: 2});
+
+		const steps = Array.from(await queue.take(2));
+
+		t.same(steps[0], {test: '2'});
+		t.same(steps[1], {test: '1'});
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
 });
 
-test('priority', function * (t) {
-	queue.sort({priority: -1});
-	yield queue.put({test: '1'}, {priority: 1});
-	yield queue.put({test: '2'}, {priority: 2});
+test('desc priority', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
 
-	var step = yield queue.take(2);
-	t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
-	t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
-	t.ok(step.next().done);
-});
+	try {
+		queue.sort({priority: 1});
 
-test('priority', function * (t) {
-	queue.sort({priority: 1});
-	yield queue.put({test: '1'}, {priority: 1});
-	yield queue.put({test: '2'}, {priority: 2});
+		await queue.put({test: '1'}, {priority: 1});
+		await queue.put({test: '2'}, {priority: 2});
 
-	var step = yield queue.take(2);
-	t.deepEqual(step.next().value, {test: '1'}, 'should return right job');
-	t.deepEqual(step.next().value, {test: '2'}, 'should return right job');
-	t.ok(step.next().done);
-});
-
-test('teardown', function * () {
-	queue.close();
-	db.close();
+		const steps = Array.from(await queue.take(2));
+		t.same(steps[0], {test: '1'});
+		t.same(steps[1], {test: '2'});
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
 });

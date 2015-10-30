@@ -1,29 +1,22 @@
-var test = require('gap');
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var queue = require('../')('localhost/test');
+test('skip', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
 
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-
-test('setup', function * () {
 	try {
-		yield jobs.drop();
-	} catch (e) { }
-});
+		await queue.put({test: 'wow'});
 
-test('skip', function * (t) {
-	yield queue.put({test: 'wow'});
+		const step = await queue.take();
+		t.same(step.next().value, {test: 'wow'}, 'should return right job');
+		t.ok(step.next(false).done, 'should return one jobs');
 
-	var step = yield queue.take();
-	t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
-	t.ok(step.next(false).done, 'should return one jobs');
-
-	var job = yield jobs.find();
-	t.equal(job.length, 1, 'should return job in queue');
-});
-
-test('teardown', function * () {
-	queue.close();
-	db.close();
+		const job = await queueDb.db.collection('default').find().toArray();
+		t.is(job.length, 1, 'should return job in queue');
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
 });

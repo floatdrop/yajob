@@ -1,29 +1,22 @@
-var test = require('gap');
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var queue = require('../')('localhost/test').trys(1);
+test('trys', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri).trys(1);
 
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-
-test('setup', function * () {
 	try {
-		yield jobs.drop();
-	} catch (e) { }
-});
+		await queue.put({test: 'wow'});
 
-test('trys', function * (t) {
-	yield queue.put({test: 'wow'});
+		const step = await queue.take();
+		t.same(step.next().value, {test: 'wow'}, 'should return right job');
+		t.ok(step.next(false).done, 'should return one jobs');
 
-	var step = yield queue.take();
-	t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
-	t.ok(step.next(false).done, 'should return one jobs');
-
-	var job = yield jobs.find({status: queue.status.failed});
-	t.equal(job.length, 1, 'should return failed job in queue');
-});
-
-test('teardown', function * () {
-	queue.close();
-	db.close();
+		const jobs = await queueDb.db.collection('default').find({status: queue.status.failed}).toArray();
+		t.is(jobs.length, 1, 'should return failed job in queue');
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
 });

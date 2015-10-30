@@ -1,53 +1,47 @@
-'use strict';
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var test = require('gap');
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-var queueOne;
-var queueTwo;
-
-test('setup', function * () {
-	queueOne = require('../')('localhost/test');
-	queueTwo = require('../')('localhost/test');
+test('sequence read (in different queues)', async t => {
+	const queueDb = await QueueDb();
+	const queueOne = yajob(queueDb.uri);
+	const queueTwo = yajob(queueDb.uri);
 
 	try {
-		yield jobs.drop();
-	} catch (e) { }
+		await queueOne.put({test: '1'});
+		await queueOne.put({test: '2'});
+		await queueOne.put({test: '3'});
+
+		const takeOne = await queueOne.take(2);
+		const takeTwo = await queueTwo.take(2);
+
+		const jobsTaken = Array.from(takeOne).length + Array.from(takeTwo).length;
+		t.is(jobsTaken, 3, 'should not retake jobs');
+	} finally {
+		await queueOne.close();
+		await queueTwo.close();
+		await queueDb.close();
+	}
 });
 
-test('sequence read (in different queues)', function * (t) {
-	yield jobs.remove();
+test('sequence read (in same queue)', async t => {
+	const queueDb = await QueueDb();
+	const queueOne = yajob(queueDb.uri);
+	const queueTwo = yajob(queueDb.uri);
 
-	yield queueOne.put({test: '1'});
-	yield queueOne.put({test: '2'});
-	yield queueOne.put({test: '3'});
+	try {
+		await queueOne.put({test: '1'});
+		await queueOne.put({test: '2'});
+		await queueOne.put({test: '3'});
 
-	var takeOne = yield queueOne.take(2);
-	var takeTwo = yield queueTwo.take(2);
+		const takeOne = await queueOne.take(2);
+		const takeTwo = await queueOne.take(2);
 
-	var i = Array.from(takeOne).length + Array.from(takeTwo).length;
-
-	t.equal(i, 3, 'should not retake jobs');
-});
-
-test('sequence read (in same queue)', function * (t) {
-	yield jobs.remove();
-
-	yield queueOne.put({test: '1'});
-	yield queueOne.put({test: '2'});
-	yield queueOne.put({test: '3'});
-
-	var takeOne = yield queueOne.take(2);
-	var takeTwo = yield queueOne.take(2);
-
-	var i = Array.from(takeOne).length + Array.from(takeTwo).length;
-
-	t.equal(i, 3, 'should not retake jobs');
-});
-
-test('teardown', function * () {
-	queueOne.close();
-	queueTwo.close();
-	db.close();
+		const jobsTaken = Array.from(takeOne).length + Array.from(takeTwo).length;
+		t.is(jobsTaken, 3, 'should not retake jobs');
+	} finally {
+		await queueOne.close();
+		await queueTwo.close();
+		await queueDb.close();
+	}
 });

@@ -4,7 +4,7 @@
   "description": "Yet another job queue",
   "main": "index.js",
   "scripts": {
-    "test": "xo && tap --harmony test"
+    "test": "xo && ava"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,8 @@
   },
   "homepage": "https://github.com/floatdrop/yajob",
   "devDependencies": {
-    "co-monk": "^1.0.0",
-    "gap": "^0.3.0",
-    "tap": "^0.5.0",
+    "ava": "^0.3.0",
+    "mongodb": "^2.0.47",
     "xo": "^0.10.0"
   },
   "files": [
@@ -35,8 +34,9 @@
     "monk": "^0.9.1"
   },
   "xo": {
-    "ignore": [
-      "benchmark/**"
+    "ignores": [
+      "benchmark/**",
+      "test/**"
     ]
   }
 }

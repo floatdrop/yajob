@@ -1,73 +1,72 @@
-'use strict';
+import test from 'ava';
+import yajob from '..';
+import {QueueDb} from './_utils';
 
-var test = require('gap');
+test('take one', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
 
-var queue = require('../')('localhost/test');
-
-var monk = require('monk');
-var db = monk('localhost/test');
-var jobs = db.get('default');
-
-test('setup', function * () {
 	try {
-		yield jobs.drop();
-	} catch (e) { }
-});
+		await queue.put({test: 'wow'});
 
-test('take one', function * (t) {
-	yield queue.put({test: 'wow'});
+		const promise = queue.take();
+		t.is(typeof promise.then, 'function', 'should return a Promise');
 
-	var promise = queue.take();
-	t.equal(typeof promise.then, 'function', 'should return a Promise');
+		const taken = Array.from(await promise);
+		t.same(taken, [{test: 'wow'}]);
 
-	var step = yield promise;
-	t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
-	t.ok(step.next().done, 'should return one job');
-
-	var job = yield jobs.find();
-	t.equal(job.length, 0, 'should remove job from queue');
-});
-
-test('take two', function * (t) {
-	yield queue.put({test: 'wow1'});
-	yield queue.put({test: 'wow2'});
-
-	var it = yield queue.take(2);
-	var step = it;
-	t.deepEqual(step.next().value, {test: 'wow1'}, 'should return right job');
-	t.deepEqual(step.next().value, {test: 'wow2'}, 'should return right job');
-	t.ok(step.next().done, 'should return two jobs');
-});
-
-test('take some', function * (t) {
-	yield queue.put({test: 'wow'});
-
-	var it = yield queue.take(2);
-	var step = it;
-	t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
-	t.ok(step.next().done, 'should return one jobs');
-});
-
-test('take limit', function * (t) {
-	yield queue.put({test: 'wow'});
-	yield queue.put({test: 'wow'});
-
-	var it = yield queue.take(1);
-	var step = it;
-	t.deepEqual(step.next().value, {test: 'wow'}, 'should return right job');
-	t.ok(step.next().done, 'should return one jobs');
-});
-
-test('take in for loop', function * (t) {
-	yield queue.put({test: 'wow'});
-	yield queue.put({test: 'wow'});
-
-	for (let job of yield queue.take(2)) {
-		t.deepEqual(job, {test: 'wow'}, 'should return right job');
+		const jobs = await queueDb.db.collection('default').find().toArray();
+		t.is(jobs.length, 0, 'should remove job from queue');
+	} finally {
+		await queue.close();
+		await queueDb.close();
 	}
 });
 
-test('teardown', function * () {
-	queue.close();
-	db.close();
+test('take two', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'wow1'});
+		await queue.put({test: 'wow2'});
+
+		const taken = Array.from(await queue.take(2));
+		t.same(taken[0], {test: 'wow1'});
+		t.same(taken[1], {test: 'wow2'});
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
+});
+
+test('take some', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'wow'});
+
+		const taken = Array.from(await queue.take(2));
+		t.same(taken[0], {test: 'wow'});
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
+});
+
+test('take limit', async t => {
+	const queueDb = await QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'wow'});
+		await queue.put({test: 'wow'});
+
+		const taken = Array.from(await queue.take(2));
+		t.same(taken[0], {test: 'wow'});
+	} finally {
+		await queue.close();
+		await queueDb.close();
+	}
 });

@@ -146,7 +146,7 @@ Yajob.prototype.remove = function (attrs) {
 };
 
 Yajob.prototype.close = function () {
-	this._db.close();
+	return this._db.close();
 };
 
 module.exports = Yajob;

@@ -9,7 +9,9 @@ function QueueDb() {
 	var instance = {
 		uri: `mongodb://localhost/${pid}-${id}`,
 		close() {
-			return this.db.dropDatabase();
+			return this.db.dropDatabase().then(() => {
+				return this.db.close();
+			});
 		}
 	};
 

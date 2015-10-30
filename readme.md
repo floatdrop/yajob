@@ -10,15 +10,16 @@ __Requirements__:
 ## Usage
 
 ```js
-var yajob = require('yajob');
-var mails = yajob('localhost/queuedb')
+const yajob = require('yajob');
+const mails = yajob('localhost/queuedb')
     .tag('mails');
 
-yield mails.put({
+mails.put({
     from: 'floatdrop@gmail.com',
     to: 'nodejs-dev@dev-null.com',
     body: 'Wow!'
 });
+// => Promise
 
 for (var mail of yield mails.take(100)) {
     yield sendmail(mail);
@@ -32,8 +33,9 @@ Jobs removed from queue, when all jobs are taken from batch.
 In some cases you will need to skip taken job. To do this pass into generator `false` value:
 
 ```js
-var jobs = yield mails.take(100);
-var job = jobs.next().value;
+const jobs = yield mails.take(100);
+const job = jobs.next().value;
+
 if (value === 'Ohnoez') {
     job.next(false); // Returns Ohnoez back to queue and get next job
 }
@@ -44,7 +46,7 @@ if (value === 'Ohnoez') {
 By default, all jobs have priority `0`. You can specify `sort` for queue, in which jobs will be taken:
 
 ```js
-var important = queue.tag('mail').sort({priority: -1});
+const important = queue.tag('mail').sort({priority: -1});
 ```
 
 ## API

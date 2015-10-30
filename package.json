@@ -23,7 +23,6 @@
   "homepage": "https://github.com/floatdrop/yajob",
   "devDependencies": {
     "ava": "^0.3.0",
-    "mongodb": "^2.0.47",
     "xo": "^0.10.0"
   },
   "files": [
@@ -31,7 +30,7 @@
   ],
   "dependencies": {
     "array-shuffle": "^1.0.0",
-    "monk": "^0.9.1"
+    "mongodb": "^2.0.47"
   },
   "xo": {
     "ignores": [

@@ -1,7 +1,7 @@
 'use strict';
 
-const monk = require('monk');
-const ObjectID = require('monk/node_modules/mongoskin').ObjectID;
+const MongoClient = require('mongodb').MongoClient;
+const ObjectID = require('mongodb').ObjectID;
 const shuffle = require('array-shuffle');
 
 function Yajob(uri) {
@@ -10,7 +10,7 @@ function Yajob(uri) {
 	}
 
 	this._tag = 'default';
-	this._db = monk(uri);
+	this._db = MongoClient.connect(uri);
 	this._delay = 0;
 	this._maxTrys = Infinity;
 }
@@ -50,9 +50,9 @@ Yajob.prototype.put = function (attrs, opts) {
 		attrs = [attrs];
 	}
 
-	const jobs = this._db.get(this._tag);
+	const jobs = this._db.then(db => db.collection(this._tag));
 
-	return jobs.insert(attrs.map(obj => {
+	return jobs.then(c => c.insert(attrs.map(obj => {
 		return {
 			status: Yajob.status.new,
 			attempts: 0,
@@ -60,7 +60,7 @@ Yajob.prototype.put = function (attrs, opts) {
 			scheduledAt: opts.schedule,
 			priority: opts.priority
 		};
-	}));
+	})));
 };
 
 Yajob.prototype.take = function (count) {
@@ -68,7 +68,7 @@ Yajob.prototype.take = function (count) {
 
 	const now = new Date();
 	const maxTrys = this._maxTrys;
-	const collection = this._db.get(this._tag);
+	const collection = this._db.then(db => db.collection(this._tag));
 	const takeId = new ObjectID();
 	const sorting = this._sort;
 
@@ -82,7 +82,7 @@ Yajob.prototype.take = function (count) {
 			status: Yajob.status.new
 		};
 
-		return collection.update(pickedJobs, {
+		return collection.then(c => c.update(pickedJobs, {
 			$set: {
 				status: Yajob.status.taken,
 				takenBy: takeId
@@ -91,7 +91,7 @@ Yajob.prototype.take = function (count) {
 				takenAt: {$type: 'date'}
 			},
 			$inc: {attempts: 1}
-		}, {multi: true});
+		}, {multi: true}));
 	}
 
 	function getJobs(status) {
@@ -99,7 +99,7 @@ Yajob.prototype.take = function (count) {
 			return [];
 		}
 
-		return collection.find({takenBy: takeId}, {sort: sorting});
+		return collection.then(c => c.find({takenBy: takeId}, {sort: sorting}).toArray());
 	}
 
 	function returnGenerator(batch) {
@@ -111,17 +111,18 @@ Yajob.prototype.take = function (count) {
 				var done = yield job.attrs;
 
 				if (done === false) {
-					collection.update(
+					/* eslint-disable no-loop-func */
+					collection.then(c => c.update(
 						{_id: job._id},
 						{status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
-					);
+					));
 				} else {
 					ids.push(job._id);
 				}
 			}
 
 			if (ids.length) {
-				collection.remove({_id: {$in: ids}});
+				collection.then(c => c.remove({_id: {$in: ids}}));
 			}
 		})();
 	}
@@ -132,19 +133,19 @@ Yajob.prototype.take = function (count) {
 	};
 
 	return collection
-		.find(notTakenJobs, {limit: count * 2, sort: this._sort, fields: {_id: 1}})
+		.then(c => c.find(notTakenJobs, {limit: count * 2, sort: this._sort, fields: {_id: 1}}).toArray())
 		.then(takeJobs)
 		.then(getJobs)
 		.then(returnGenerator);
 };
 
 Yajob.prototype.remove = function (attrs) {
-	const collection = this._db.get(this._tag);
-	return collection.remove({status: Yajob.status.new, attrs: attrs});
+	const collection = this._db.then(db => db.collection(this._tag));
+	return collection.then(c => c.remove({status: Yajob.status.new, attrs: attrs}));
 };
 
 Yajob.prototype.close = function () {
-	return this._db.close();
+	return this._db.then(db => db.close());
 };
 
 module.exports = Yajob;

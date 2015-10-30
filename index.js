@@ -58,11 +58,7 @@ Yajob.prototype.put = function (attrs, opts) {
 			attempts: 0,
 			attrs: obj,
 			scheduledAt: opts.schedule,
-			priority: opts.priority,
-
-			// Preallocate space to keep paddingFactor ~ 1
-			takenAt: new Date(0),
-			takenBy: new ObjectID('000000000000000000000000')
+			priority: opts.priority
 		};
 	}));
 };

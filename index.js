@@ -1,8 +1,8 @@
 'use strict';
 
-var monk = require('monk');
-var ObjectID = require('monk/node_modules/mongoskin').ObjectID;
-var shuffle = require('array-shuffle');
+const monk = require('monk');
+const ObjectID = require('monk/node_modules/mongoskin').ObjectID;
+const shuffle = require('array-shuffle');
 
 function Yajob(uri) {
 	if (!(this instanceof Yajob)) {
@@ -50,9 +50,9 @@ Yajob.prototype.put = function (attrs, opts) {
 		attrs = [attrs];
 	}
 
-	var jobs = this._db.get(this._tag);
+	const jobs = this._db.get(this._tag);
 
-	return jobs.insert(attrs.map(function (obj) {
+	return jobs.insert(attrs.map(obj => {
 		return {
 			status: Yajob.status.new,
 			attempts: 0,
@@ -66,20 +66,18 @@ Yajob.prototype.put = function (attrs, opts) {
 Yajob.prototype.take = function (count) {
 	count = count || 1;
 
-	var now = new Date();
-	var maxTrys = this._maxTrys;
-	var collection = this._db.get(this._tag);
-	var takeId = new ObjectID();
-	var sorting = this._sort;
+	const now = new Date();
+	const maxTrys = this._maxTrys;
+	const collection = this._db.get(this._tag);
+	const takeId = new ObjectID();
+	const sorting = this._sort;
 
 	function takeJobs(jobs) {
-		var ids = jobs.map(function (d) {
-			return d._id;
-		});
+		var ids = jobs.map(d => d._id);
 
 		ids = shuffle(ids).splice(0, count);
 
-		var pickedJobs = {
+		const pickedJobs = {
 			_id: {$in: ids},
 			status: Yajob.status.new
 		};
@@ -141,7 +139,7 @@ Yajob.prototype.take = function (count) {
 };
 
 Yajob.prototype.remove = function (attrs) {
-	var collection = this._db.get(this._tag);
+	const collection = this._db.get(this._tag);
 	return collection.remove({status: Yajob.status.new, attrs: attrs});
 };
 

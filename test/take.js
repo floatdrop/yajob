@@ -15,7 +15,7 @@ test('take one', async t => {
 		const taken = Array.from(await promise);
 		t.same(taken, [{test: 'wow'}]);
 
-		const jobs = await queueDb.db.collection('default').find().toArray();
+		const jobs = Array.from(queue.take());
 		t.is(jobs.length, 0, 'should remove job from queue');
 	} finally {
 		await queue.close();

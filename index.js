@@ -50,17 +50,19 @@ Yajob.prototype.put = function (attrs, opts) {
 		attrs = [attrs];
 	}
 
-	const jobs = this._db.then(db => db.collection(this._tag));
-
-	return jobs.then(c => c.insert(attrs.map(obj => {
+	function attrsToJob(attrs) {
 		return {
 			status: Yajob.status.new,
 			attempts: 0,
-			attrs: obj,
+			attrs,
 			scheduledAt: opts.schedule,
 			priority: opts.priority
 		};
-	})));
+	}
+
+	const jobs = this._db.then(db => db.collection(this._tag));
+
+	return jobs.then(c => c.insert(attrs.map(attrsToJob)));
 };
 
 Yajob.prototype.take = function (count) {

@@ -107,24 +107,25 @@ Yajob.prototype.take = function (count) {
 	function returnGenerator(batch) {
 		return (function * () {
 			var ids = [];
+			try {
+				for (var i = 0; i < batch.length; i++) {
+					var job = batch[i];
+					var done = yield job.attrs;
 
-			for (var i = 0; i < batch.length; i++) {
-				var job = batch[i];
-				var done = yield job.attrs;
-
-				if (done === false) {
-					/* eslint-disable no-loop-func */
-					collection.then(c => c.update(
-						{_id: job._id},
-						{status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
-					));
-				} else {
-					ids.push(job._id);
+					if (done === false) {
+						/* eslint-disable no-loop-func */
+						collection.then(c => c.update(
+							{_id: job._id},
+							{status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
+						));
+					} else {
+						ids.push(job._id);
+					}
 				}
-			}
-
-			if (ids.length) {
-				collection.then(c => c.remove({_id: {$in: ids}}));
+			} finally {
+				if (ids.length) {
+					collection.then(c => c.remove({_id: {$in: ids}}));
+				}
 			}
 		})();
 	}

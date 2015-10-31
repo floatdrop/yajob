@@ -26,7 +26,7 @@ for (var mail of yield mails.take(100)) {
 }
 ```
 
-Jobs removed from queue, when all jobs are taken from batch.
+Processed jobs removed from queue, when for-loop is ended or broken (either with `break` or exception).
 
 ### Skip jobs
 

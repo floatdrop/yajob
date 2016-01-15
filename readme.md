@@ -51,7 +51,7 @@ const important = queue.tag('mail').sort({priority: -1});
 
 ## API
 
-### Yajob(uri)
+### Yajob(uri, [options])
 
 Returns instance of queue, that stores data in MongoDB.
 
@@ -59,6 +59,12 @@ Returns instance of queue, that stores data in MongoDB.
 Type: `String`  
 
 MongoDB URI string.
+
+##### options  
+Type: `Object`  
+
+MongoDB [MongoClient.connect options](http://mongodb.github.io/node-mongodb-native/2.1/api/MongoClient.html).
+
 
 ## Methods
 

@@ -4,13 +4,13 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const shuffle = require('array-shuffle');
 
-function Yajob(uri) {
+function Yajob(uri, opts) {
 	if (!(this instanceof Yajob)) {
-		return new Yajob(uri);
+		return new Yajob(uri, opts);
 	}
 
 	this._tag = 'default';
-	this._db = MongoClient.connect(uri);
+	this._db = MongoClient.connect(uri, opts);
 	this._delay = 0;
 	this._maxTrys = Infinity;
 }

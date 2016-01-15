@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/floatdrop/yajob",
   "devDependencies": {
-    "ava": "^0.3.0",
+    "ava": "^0.10.0",
     "xo": "^0.10.0"
   },
   "files": [

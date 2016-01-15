@@ -3,7 +3,7 @@ import yajob from '..';
 import {QueueDb} from './_utils';
 
 test('sequence read (in different queues)', async t => {
-	const queueDb = await QueueDb();
+	const queueDb = await new QueueDb();
 	const queueOne = yajob(queueDb.uri);
 	const queueTwo = yajob(queueDb.uri);
 
@@ -18,16 +18,13 @@ test('sequence read (in different queues)', async t => {
 		const jobsTaken = Array.from(takeOne).length + Array.from(takeTwo).length;
 		t.is(jobsTaken, 3, 'should not retake jobs');
 	} finally {
-		await queueOne.close();
-		await queueTwo.close();
 		await queueDb.close();
 	}
 });
 
 test('sequence read (in same queue)', async t => {
-	const queueDb = await QueueDb();
+	const queueDb = await new QueueDb();
 	const queueOne = yajob(queueDb.uri);
-	const queueTwo = yajob(queueDb.uri);
 
 	try {
 		await queueOne.put({test: '1'});
@@ -40,8 +37,6 @@ test('sequence read (in same queue)', async t => {
 		const jobsTaken = Array.from(takeOne).length + Array.from(takeTwo).length;
 		t.is(jobsTaken, 3, 'should not retake jobs');
 	} finally {
-		await queueOne.close();
-		await queueTwo.close();
 		await queueDb.close();
 	}
 });

@@ -33,9 +33,9 @@
     "mongodb": "^2.0.47"
   },
   "xo": {
+    "esnext": true,
     "ignores": [
-      "benchmark/**",
-      "test/**"
+      "benchmark/**"
     ]
   }
 }

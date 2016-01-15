@@ -75,7 +75,7 @@ Yajob.prototype.take = function (count) {
 	const sorting = this._sort;
 
 	function takeJobs(jobs) {
-		var ids = jobs.map(d => d._id);
+		let ids = jobs.map(d => d._id);
 
 		ids = shuffle(ids).splice(0, count);
 
@@ -106,11 +106,11 @@ Yajob.prototype.take = function (count) {
 
 	function returnGenerator(batch) {
 		return (function * () {
-			var ids = [];
+			const ids = [];
 			try {
-				for (var i = 0; i < batch.length; i++) {
-					var job = batch[i];
-					var done = yield job.attrs;
+				for (let i = 0; i < batch.length; i++) {
+					const job = batch[i];
+					const done = yield job.attrs;
 
 					if (done === false) {
 						/* eslint-disable no-loop-func */
@@ -130,7 +130,7 @@ Yajob.prototype.take = function (count) {
 		})();
 	}
 
-	var notTakenJobs = {
+	const notTakenJobs = {
 		status: Yajob.status.new,
 		scheduledAt: {$lte: now}
 	};
@@ -144,11 +144,11 @@ Yajob.prototype.take = function (count) {
 
 Yajob.prototype.remove = function (attrs) {
 	const collection = this._db.then(db => db.collection(this._tag));
-	return collection.then(c => c.remove({status: Yajob.status.new, attrs: attrs}));
+	return collection.then(c => c.remove({status: Yajob.status.new, attrs}));
 };
 
-Yajob.prototype.close = function () {
-	return this._db.then(db => db.close());
+Yajob.prototype.close = function (force) {
+	return this._db.then(db => db.close(force));
 };
 
 module.exports = Yajob;

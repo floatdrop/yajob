@@ -1,17 +1,16 @@
-const MongoClient = require('mongodb').MongoClient;
+'use strict';
 
+const MongoClient = require('mongodb').MongoClient;
 const pid = process.pid;
-var id = 0;
+let id = 0;
 
 function QueueDb() {
 	id++;
 
-	var instance = {
+	const instance = {
 		uri: `mongodb://localhost/${pid}-${id}`,
 		close() {
-			return this.db.dropDatabase().then(() => {
-				return this.db.close();
-			});
+			return this.db.dropDatabase().then(() => this.db.close(true));
 		}
 	};
 

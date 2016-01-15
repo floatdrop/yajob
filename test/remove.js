@@ -3,7 +3,7 @@ import yajob from '..';
 import {QueueDb} from './_utils';
 
 test('removes job', async t => {
-	const queueDb = await QueueDb();
+	const queueDb = await new QueueDb();
 	const queue = yajob(queueDb.uri);
 
 	try {
@@ -12,7 +12,6 @@ test('removes job', async t => {
 		const jobs = await queueDb.db.collection('default').find().toArray();
 		t.is(jobs.length, 0, 'should remove job from queue');
 	} finally {
-		await queue.close();
 		await queueDb.close();
 	}
 });

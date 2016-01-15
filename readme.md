@@ -99,7 +99,7 @@ Maximum number of jobs to take from one batch request.
 
 Removes jobs, that match `attrs` from queue. Returns `Promise`.
 
-### close()
+### close([force])
 
 Closes connections to MongoDB.
 

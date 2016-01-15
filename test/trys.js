@@ -3,7 +3,7 @@ import yajob from '..';
 import {QueueDb} from './_utils';
 
 test('trys', async t => {
-	const queueDb = await QueueDb();
+	const queueDb = await new QueueDb();
 	const queue = yajob(queueDb.uri).trys(1);
 
 	try {
@@ -18,7 +18,6 @@ test('trys', async t => {
 		const jobs = await queueDb.db.collection('default').find({status: queue.status.failed}).toArray();
 		t.is(jobs.length, 1, 'should return failed job in queue');
 	} finally {
-		await queue.close();
 		await queueDb.close();
 	}
 });

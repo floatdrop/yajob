@@ -3,7 +3,7 @@ import yajob from '..';
 import {QueueDb} from './_utils';
 
 test('scheduled', async t => {
-	const queueDb = await QueueDb();
+	const queueDb = await new QueueDb();
 	const queue = yajob(queueDb.uri);
 
 	try {
@@ -17,7 +17,6 @@ test('scheduled', async t => {
 		jobs = Array.from(await queue.take());
 		t.same(jobs.length, 1, 'should return scheduled job');
 	} finally {
-		await queue.close();
 		await queueDb.close();
 	}
 });

@@ -113,10 +113,12 @@ Yajob.prototype.take = function (count) {
 					const done = yield job.attrs;
 
 					if (done === false) {
+						const status = job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed;
+
 						/* eslint-disable no-loop-func */
 						collection.then(c => c.update(
 							{_id: job._id},
-							{status: job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed}
+							{$set: {status}}
 						));
 					} else {
 						ids.push(job._id);

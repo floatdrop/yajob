@@ -21,3 +21,23 @@ test('trys', async t => {
 		await queueDb.close();
 	}
 });
+
+test('several trys', async t => {
+	const queueDb = await new QueueDb();
+	const queue = yajob(queueDb.uri).trys(2);
+
+	try {
+		await queue.put({test: 'wow'});
+
+		const step = await queue.take();
+		t.same(step.next().value, {test: 'wow'}, 'should return right job');
+		t.ok(step.next(false).done, 'should return one jobs');
+
+		await new Promise(resolve => setTimeout(resolve, 1000));
+
+		const job = await queueDb.db.collection('default').findOne();
+		t.same(job.attrs, {test: 'wow'}, 'should not changed job between trys');
+	} finally {
+		await queueDb.close();
+	}
+});

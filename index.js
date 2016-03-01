@@ -97,7 +97,7 @@ Yajob.prototype.take = function (count) {
 	}
 
 	function getJobs(status) {
-		if (status.nModified < 1) {
+		if (status.result.nModified < 1) {
 			return [];
 		}
 

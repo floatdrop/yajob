@@ -113,11 +113,13 @@ Sets `name` of the MongoDB collection, that will be used to save and get jobs.
 ### delay(milliseconds)
 
 Sets delay for job, that is not scheduled. That is - every job without `schedule` options will be scheduled on `Date() + delay`.
+If job is failed delay will be used to define new shedule on `Date() + delay`.
 
 ### trys(number)
 Default: `Infinity`
 
 Sets maximum job trys, before `failed` status will be assigned.
+Delay between trys is set by `delay(milliseconds)` method.
 
 ### sort(order)
 

@@ -73,6 +73,7 @@ Yajob.prototype.take = function (count) {
 	const collection = this._db.then(db => db.collection(this._tag));
 	const takeId = new ObjectID();
 	const sorting = this._sort;
+	const delay = this._delay;
 
 	function takeJobs(jobs) {
 		let ids = jobs.map(d => d._id);
@@ -115,10 +116,11 @@ Yajob.prototype.take = function (count) {
 					if (done === false) {
 						const status = job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed;
 
+						const data = {status, scheduledAt: new Date(Date.now() + delay)};
 						/* eslint-disable no-loop-func */
 						collection.then(c => c.update(
 							{_id: job._id},
-							{$set: {status}}
+							{$set: data}
 						));
 					} else {
 						ids.push(job._id);

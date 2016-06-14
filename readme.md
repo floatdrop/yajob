@@ -117,6 +117,23 @@ Type: `Object`
 
  * `schedule` - `Date`, when job should be available to `take`
  * `priority` - `Number`, that represents priority of job
+ * `meta` - `Object`, optional metadata attached to job and returned in taken object
+
+### replace(attrs, [options])
+
+Update a pending job in the queue. Returns `Promise`.
+
+##### attrs
+Type: `Object`
+
+Data, that will be attached to job.
+
+##### options
+Type: `Object`
+
+ * `schedule` - `Date`, when job should be available to `take`
+ * `priority` - `Number`, that represents priority of job
+ * `meta` - `Object`, optional metadata attached to job and returned in taken object
 
 ### take([count])
 

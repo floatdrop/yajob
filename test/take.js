@@ -22,6 +22,27 @@ test('take one', async t => {
 	}
 });
 
+test('take one with meta', async t => {
+	const queueDb = await new QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'wow'}, {meta: {param: 1}});
+
+		const promise = queue.take();
+		t.is(typeof promise.then, 'function', 'should return a Promise');
+
+		const taken = Array.from(await promise);
+		console.log('TAKEN: ', taken);
+		t.same(taken, [{test: 'wow', param: 1}]);
+
+		const jobs = Array.from(queue.take());
+		t.is(jobs.length, 0, 'should remove job from queue');
+	} finally {
+		await queueDb.close();
+	}
+});
+
 test('take two', async t => {
 	const queueDb = await new QueueDb();
 	const queue = yajob(queueDb.uri);

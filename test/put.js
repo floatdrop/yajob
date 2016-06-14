@@ -15,6 +15,20 @@ test('put should add job to queue', async t => {
 	}
 });
 
+test('put should add job to queue with meta', async t => {
+	const queueDb = await new QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'message'}, {meta: {param: 1}});
+		const job = await queueDb.db.collection('default').find().toArray();
+		t.same(job[0].attrs, {test: 'message'});
+		t.same(job[0].meta, {param: 1});
+	} finally {
+		await queueDb.close();
+	}
+});
+
 test('put take an Array as argument', async t => {
 	const queueDb = await new QueueDb();
 	const queue = yajob(queueDb.uri);

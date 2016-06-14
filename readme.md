@@ -28,6 +28,41 @@ for (var mail of yield mails.take(100)) {
 
 Processed jobs removed from queue, when for-loop is ended or broken (either with `break` or exception).
 
+### Updating pending events with metadata
+
+You may also attach metadata to future job and update as follows:
+
+```js
+const yajob = require('yajob');
+const mails = yajob('localhost/queuedb')
+    .tag('mails');
+
+var d = new Date();
+d.setHours(24,0,0,0);
+
+mails.put({
+    from: 'floatdrop@gmail.com',
+    to: 'nodejs-dev@dev-null.com',
+}, {
+    meta: {body: 'You have 1 new notification'},
+    schedule: d
+});
+// => Promise
+
+// Meanwhile, a new notification comes in
+
+mails.replace({
+    from: 'floatdrop@gmail.com',
+    to: 'nodejs-dev@dev-null.com'
+}, {
+    meta: {body: 'You have 2 new notification'},
+    schedule: d
+});
+
+```
+
+This will only send out a single email with the new body.
+
 ### Skip jobs
 
 In some cases you will need to skip taken job. To do this pass into generator `false` value:
@@ -55,13 +90,13 @@ const important = queue.tag('mail').sort({priority: -1});
 
 Returns instance of queue, that stores data in MongoDB.
 
-##### uri  
-Type: `String`  
+##### uri
+Type: `String`
 
 MongoDB URI string.
 
-##### options  
-Type: `Object`  
+##### options
+Type: `Object`
 
 MongoDB [MongoClient.connect options](http://mongodb.github.io/node-mongodb-native/2.1/api/MongoClient.html).
 
@@ -90,7 +125,7 @@ Returns `Promise` that resolves to a `Generator`, that will emit jobs one by one
 After all jobs are taken from batch - they are considered `done` and removed from queue.
 
 ##### count
-Type: `Number`  
+Type: `Number`
 Default: `1`
 
 Maximum number of jobs to take from one batch request.

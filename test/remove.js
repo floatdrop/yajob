@@ -15,3 +15,17 @@ test('removes job', async t => {
 		await queueDb.close();
 	}
 });
+
+test('removes job with meta', async t => {
+	const queueDb = await new QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.put({test: 'wow'}, {meta: {param: 1}});
+		await queue.remove({test: 'wow'});
+		const jobs = await queueDb.db.collection('default').find().toArray();
+		t.is(jobs.length, 0, 'should remove job from queue');
+	} finally {
+		await queueDb.close();
+	}
+});

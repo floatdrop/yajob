@@ -42,7 +42,7 @@ d.setHours(24,0,0,0);
 
 mails.put({
     from: 'floatdrop@gmail.com',
-    to: 'nodejs-dev@dev-null.com',
+    to: 'nodejs-dev@dev-null.com'
 }, {
     meta: {body: 'You have 1 new notification'},
     schedule: d
@@ -59,6 +59,19 @@ mails.replace({
     schedule: d
 });
 
+// Now, when you take the job in the future:
+
+let job = yield mails.take();
+console.log(job);
+```
+
+This would print out:
+```
+{
+    from: 'floatdrop@gmail.com',
+    to: 'nodejs-dev@dev-null.com',
+    body: 'You have 2 new notification'
+}
 ```
 
 This will only send out a single email with the new body.

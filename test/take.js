@@ -33,7 +33,6 @@ test('take one with meta', async t => {
 		t.is(typeof promise.then, 'function', 'should return a Promise');
 
 		const taken = Array.from(await promise);
-		console.log('TAKEN: ', taken);
 		t.same(taken, [{test: 'wow', param: 1}]);
 
 		const jobs = Array.from(queue.take());

@@ -20,3 +20,16 @@ test('replace should add job to queue then update it', async t => {
 	}
 });
 
+test('replace should add job to queue if it does not exist', async t => {
+	const queueDb = await new QueueDb();
+	const queue = yajob(queueDb.uri);
+
+	try {
+		await queue.replace({test: 'message'}, {meta: {param: 2}});
+		const job2 = await queueDb.db.collection('default').find().toArray();
+		t.same(job2[0].attrs, {test: 'message'});
+		t.same(job2[0].meta, {param: 2});
+	} finally {
+		await queueDb.close();
+	}
+});

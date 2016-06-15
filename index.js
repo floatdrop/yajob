@@ -86,7 +86,7 @@ Yajob.prototype.replace = function (attrs, opts) {
 
 	const jobs = this._db.then(db => db.collection(this._tag));
 
-	return jobs.then(c => c.update({status: Yajob.status.new, attrs}, attrsToJob(attrs)), {upsert: true});
+	return jobs.then(c => c.update({status: Yajob.status.new, attrs}, attrsToJob(attrs), {upsert: true, w: 1}));
 };
 
 Yajob.prototype.take = function (count) {

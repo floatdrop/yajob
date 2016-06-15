@@ -45,6 +45,7 @@ Yajob.prototype.put = function (attrs, opts) {
 	opts = opts || {};
 	opts.schedule = opts.schedule || new Date(Date.now() + this._delay);
 	opts.priority = opts.priority || 0;
+	opts.meta = opts.meta || {};
 
 	if (!Array.isArray(attrs)) {
 		attrs = [attrs];
@@ -56,13 +57,36 @@ Yajob.prototype.put = function (attrs, opts) {
 			attempts: 0,
 			attrs,
 			scheduledAt: opts.schedule,
-			priority: opts.priority
+			priority: opts.priority,
+			meta: opts.meta
 		};
 	}
 
 	const jobs = this._db.then(db => db.collection(this._tag));
 
 	return jobs.then(c => c.insert(attrs.map(attrsToJob)));
+};
+
+Yajob.prototype.replace = function (attrs, opts) {
+	opts = opts || {};
+	opts.schedule = opts.schedule || new Date(Date.now() + this._delay);
+	opts.priority = opts.priority || 0;
+	opts.meta = opts.meta || {};
+
+	function attrsToJob(attrs) {
+		return {
+			status: Yajob.status.new,
+			attempts: 0,
+			attrs,
+			scheduledAt: opts.schedule,
+			priority: opts.priority,
+			meta: opts.meta
+		};
+	}
+
+	const jobs = this._db.then(db => db.collection(this._tag));
+
+	return jobs.then(c => c.update({status: Yajob.status.new, attrs}, attrsToJob(attrs), {upsert: true, w: 1}));
 };
 
 Yajob.prototype.take = function (count) {
@@ -111,7 +135,7 @@ Yajob.prototype.take = function (count) {
 			try {
 				for (let i = 0; i < batch.length; i++) {
 					const job = batch[i];
-					const done = yield job.attrs;
+					const done = yield Object.assign(job.attrs, job.meta);
 
 					if (done === false) {
 						const status = job.attempts < maxTrys ? Yajob.status.new : Yajob.status.failed;

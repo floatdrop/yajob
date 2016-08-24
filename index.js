@@ -65,6 +65,13 @@ Yajob.prototype.put = function (attrs, opts) {
 	return jobs.then(c => c.insert(attrs.map(attrsToJob)));
 };
 
+Yajob.prototype.putUnique = function (attrs, opts) {
+	return this._db
+		.then(db => db.collection(this._tag))
+		.then(c => c.count({attrs}))
+		.then(count => count ? {result: {ok: 0, n: 0}} : this.put(attrs, opts));
+};
+
 Yajob.prototype.take = function (count) {
 	count = count || 1;
 

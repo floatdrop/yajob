@@ -77,6 +77,15 @@ Type: `Object` / `Array`
 
 Data, that will be attached to job. If `attrs` is an `Array` - then every `Object` in `attrs` considered as new job.
 
+### putUnique(attr, [options])
+
+Add unique by attr job to queue. Returns `Promise`. If job isn't unique promise will be resolved with `{result: {ok: 0, n: 0}}`
+
+##### attr
+Type: `Object`
+
+Data, that will be attached to job.
+
 ##### options
 Type: `Object`
 

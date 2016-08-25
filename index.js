@@ -31,6 +31,11 @@ Yajob.prototype.delay = function (ms) {
 	return this;
 };
 
+Yajob.prototype.historyInterval = function (ms) {
+	this._historyInterval = ms;
+	return this;
+};
+
 Yajob.prototype.tag = function (name) {
 	this._tag = name;
 	return this;
@@ -74,6 +79,7 @@ Yajob.prototype.take = function (count) {
 	const takeId = new ObjectID();
 	const sorting = this._sort;
 	const delay = this._delay;
+	const historyInterval = this._historyInterval || 0;
 
 	function takeJobs(jobs) {
 		let ids = jobs.map(d => d._id);
@@ -127,7 +133,7 @@ Yajob.prototype.take = function (count) {
 					}
 				}
 			} finally {
-				if (ids.length) {
+				if (ids.length && !historyInterval) {
 					collection.then(c => c.remove({_id: {$in: ids}}));
 				}
 			}
@@ -139,11 +145,27 @@ Yajob.prototype.take = function (count) {
 		scheduledAt: {$lte: now}
 	};
 
-	return collection
+	const historyLimitTime = new Date().getTime() - historyInterval;
+	const oldTakenJobs = {
+		status: Yajob.status.taken,
+		takenAt: {$lte: new Date(historyLimitTime)}
+	};
+
+	const deleteOldJobs = collection
+		.then(c => c.find(oldTakenJobs).count()).then(jobs => {
+			if (jobs) {
+				return collection.then(c => c.remove(oldTakenJobs));
+			}
+			return Promise.resolve();
+		});
+
+	const takeNewJobs = collection
 		.then(c => c.find(notTakenJobs, {limit: count * 2, sort: this._sort, fields: {_id: 1}}).toArray())
 		.then(takeJobs)
 		.then(getJobs)
 		.then(returnGenerator);
+
+	return deleteOldJobs.then(() => takeNewJobs);
 };
 
 Yajob.prototype.remove = function (attrs) {
